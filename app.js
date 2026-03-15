@@ -1,15 +1,32 @@
+// ===============================
+// ストレージキー（GPS版と分離）
+// ===============================
+
+const RECORD_KEY = "birdlog_records"
+const SPECIES_KEY = "birdlog_species"
+
+
+// ===============================
+// 状態
+// ===============================
+
 let count = 0
 let approxSymbol = ""
 
 let editIndex = null
 let editApproxSymbol = ""
 
+
+// ===============================
+// 種リスト
+// ===============================
+
 function getBirdList(){
-return JSON.parse(localStorage.getItem("birdList") || "[]")
+return JSON.parse(localStorage.getItem(SPECIES_KEY) || "[]")
 }
 
 function saveBirdList(list){
-localStorage.setItem("birdList",JSON.stringify(list))
+localStorage.setItem(SPECIES_KEY,JSON.stringify(list))
 }
 
 function renderBirdButtons(){
@@ -92,6 +109,11 @@ renderBirdButtons()
 
 }
 
+
+// ===============================
+// sp ボタン
+// ===============================
+
 function toggleSp(){
 
 let input=document.getElementById("species")
@@ -116,11 +138,14 @@ input.value=name!==""?name+" sp.":"sp."
 
 }
 
-function plus(){
 
+// ===============================
+// 数入力
+// ===============================
+
+function plus(){
 count++
 updateCount()
-
 }
 
 function minus(){
@@ -151,6 +176,11 @@ updateCount()
 
 }
 
+
+// ===============================
+// 概数
+// ===============================
+
 function setApprox(symbol){
 
 approxSymbol=(approxSymbol===symbol)?"":symbol
@@ -158,6 +188,11 @@ approxSymbol=(approxSymbol===symbol)?"":symbol
 document.getElementById("approx").textContent=approxSymbol
 
 }
+
+
+// ===============================
+// 保存
+// ===============================
 
 function saveBird(){
 
@@ -175,11 +210,11 @@ time:new Date()
 
 }
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 logs.push(record)
 
-localStorage.setItem("birdLogs",JSON.stringify(logs))
+localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 
 count=0
 approxSymbol=""
@@ -191,13 +226,19 @@ document.getElementById("species").value=""
 
 showLogs()
 showSummary()
+showTimeSummary()
 exportText()
 
 }
 
+
+// ===============================
+// 今日の記録表示
+// ===============================
+
 function showLogs(){
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 const list=document.getElementById("list")
 
@@ -234,23 +275,34 @@ list.appendChild(li)
 
 }
 
+
+// ===============================
+// 削除
+// ===============================
+
 function deleteRecord(index){
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 logs.splice(index,1)
 
-localStorage.setItem("birdLogs",JSON.stringify(logs))
+localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 
 showLogs()
 showSummary()
+showTimeSummary()
 exportText()
 
 }
 
+
+// ===============================
+// 編集
+// ===============================
+
 function editRecord(index){
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 let r=logs[index]
 
@@ -281,7 +333,7 @@ document.getElementById("editApprox").textContent=editApproxSymbol
 
 function updateRecord(){
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 let species=document.getElementById("editSpecies").value.trim()
 
@@ -297,12 +349,13 @@ time:r.time
 
 }
 
-localStorage.setItem("birdLogs",JSON.stringify(logs))
+localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 
 closeEditModal()
 
 showLogs()
 showSummary()
+showTimeSummary()
 exportText()
 
 }
@@ -313,11 +366,10 @@ document.getElementById("editModal").style.display="none"
 
 }
 
-function normalizeSpecies(name){
 
-return name.trim()
-
-}
+// ===============================
+// 数値抽出
+// ===============================
 
 function extractNumber(count){
 
@@ -327,34 +379,30 @@ return isNaN(num)?0:num
 
 }
 
+
+// ===============================
+// 種ごとの合計
+// ===============================
+
 function showSummary(){
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 const today=new Date().toDateString()
 
 let speciesTotal={}
-let timeTotal={}
 
 logs.forEach(r=>{
 
 if(new Date(r.time).toDateString()!==today)return
 
-let species=normalizeSpecies(r.species)
+let species=r.species
 
 let num=extractNumber(r.count)
 
 if(!speciesTotal[species])speciesTotal[species]=0
 
 speciesTotal[species]+=num
-
-let hour=new Date(r.time).getHours()
-
-if(!timeTotal[hour])timeTotal[hour]={}
-
-if(!timeTotal[hour][species])timeTotal[hour][species]=0
-
-timeTotal[hour][species]+=num
 
 })
 
@@ -370,14 +418,57 @@ document.getElementById("summaryArea").textContent=text
 
 }
 
+
+// ===============================
+// 時間ごとの合計
+// ===============================
+
+function showTimeSummary(){
+
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
+
+const today=new Date().toDateString()
+
+let timeTotal={}
+
+logs.forEach(r=>{
+
+if(new Date(r.time).toDateString()!==today)return
+
+let hour=new Date(r.time).getHours()
+
+let num=extractNumber(r.count)
+
+if(!timeTotal[hour])timeTotal[hour]=0
+
+timeTotal[hour]+=num
+
+})
+
+let text=""
+
+Object.keys(timeTotal).sort((a,b)=>a-b).forEach(h=>{
+
+text+=h+"時 : "+timeTotal[h]+"\n"
+
+})
+
+document.getElementById("timeSummaryArea").textContent=text
+
+}
+
+
+// ===============================
+// テキスト出力
+// ===============================
+
 function exportText(){
 
-const logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+const logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 const today=new Date().toDateString()
 
 let text=""
-let csv="時間,種名,数\n"
 
 logs.forEach(r=>{
 
@@ -389,14 +480,16 @@ let timeText=date.getHours()+":"+String(date.getMinutes()).padStart(2,"0")
 
 text+=timeText+" "+r.species+" "+r.count+"\n"
 
-csv+=`${timeText},${r.species},${r.count}\n`
-
 })
 
 document.getElementById("exportAreaText").textContent=text
-document.getElementById("exportAreaCSV").textContent=csv
 
 }
+
+
+// ===============================
+// 開閉
+// ===============================
 
 function toggleSection(id){
 
@@ -408,25 +501,38 @@ section.style.display=
 
 }
 
+
+// ===============================
+// 今日の記録削除
+// ===============================
+
 function clearTodayLogs(){
 
 if(!confirm("今日の記録をすべて削除します。よろしいですか？"))return
 
-let logs=JSON.parse(localStorage.getItem("birdLogs")||"[]")
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
 
 const today=new Date().toDateString()
 
 logs=logs.filter(r=>new Date(r.time).toDateString()!==today)
 
-localStorage.setItem("birdLogs",JSON.stringify(logs))
+localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 
 showLogs()
 showSummary()
+showTimeSummary()
+exportText()
 
 }
+
+
+// ===============================
+// 初期化
+// ===============================
 
 renderBirdButtons()
 updateCount()
 showLogs()
 showSummary()
+showTimeSummary()
 exportText()
