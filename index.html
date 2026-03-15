@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Bird Log</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+button{
+margin:2px;
+padding:5px 10px;
+font-size:14px;
+cursor:pointer;
+}
+
+#numPad{
+margin-top:10px;
+display:flex;
+flex-wrap:wrap;
+gap:5px;
+}
+
+#numPad button{
+width:70px;
+height:50px;
+line-height:50px;
+text-align:center;
+font-size:16px;
+border-radius:5px;
+border:1px solid #333;
+box-sizing:border-box;
+padding:0;
+}
+
+#numPad button.reset{
+width:70px;
+}
+
+.toggleContent{
+display:none;
+padding:0;
+margin-top:5px;
+border:none;
+}
+
+.modal{
+display:none;
+position:fixed;
+z-index:10;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background-color:rgba(0,0,0,0.5);
+}
+
+.modal-content{
+background-color:#fff;
+margin:10% auto;
+padding:20px;
+width:90%;
+max-width:400px;
+border-radius:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>鳥の記録</h2>
+
+<label>鳥の名前</label><br>
+<input id="species">
+<button onclick="toggleSp()">sp.</button>
+
+<h3>よく見る鳥</h3>
+<div id="birdButtons"></div>
+
+<h3>数</h3>
+
+<div>
+<button onclick="minus()">−</button>
+<span id="count">0</span>
+<button onclick="plus()">＋</button>
+</div>
+
+<div id="numPad">
+
+<button onclick="addNumber(1)">1</button>
+<button onclick="addNumber(2)">2</button>
+<button onclick="addNumber(3)">3</button>
+<button onclick="addNumber(4)">4</button>
+<button onclick="addNumber(5)">5</button>
+<button onclick="addNumber(6)">6</button>
+<button onclick="addNumber(7)">7</button>
+<button onclick="addNumber(8)">8</button>
+<button onclick="addNumber(9)">9</button>
+
+<button onclick="addNumber(10)">10</button>
+<button onclick="addNumber(50)">50</button>
+<button onclick="addNumber(100)">100</button>
+
+<button class="reset" onclick="resetCount()">リセット</button>
+
+</div>
+
+<br>
+
+<div>
+<label>概数</label><br>
+<button onclick="setApprox('+')">+</button>
+<button onclick="setApprox('-')">-</button>
+<button onclick="setApprox('±')">±</button>
+<span id="approx"></span>
+</div>
+
+<br>
+
+<button id="saveBtn" onclick="saveBird()">記録</button>
+
+<h3>
+<button onclick="toggleSection('logSection')">今日の記録</button>
+<button onclick="clearTodayLogs()">一括削除</button>
+</h3>
+
+<div id="logSection" class="toggleContent">
+<ul id="list"></ul>
+</div>
+
+<h3>
+<button onclick="toggleSection('summarySection')">
+種ごとの総計（今日）
+</button>
+</h3>
+
+<div id="summarySection" class="toggleContent">
+<pre id="summaryArea"></pre>
+</div>
+
+<h3>
+<button onclick="toggleSection('timeSummarySection')">
+時間ごとの総計（今日）
+</button>
+</h3>
+
+<div id="timeSummarySection" class="toggleContent">
+<pre id="timeSummaryArea"></pre>
+</div>
+
+<h3>
+<button onclick="toggleSection('exportSectionText')">
+テキスト出力（時間・種名・数）
+</button>
+</h3>
+
+<div id="exportSectionText" class="toggleContent">
+<pre id="exportAreaText"></pre>
+</div>
+
+<h3>
+<button onclick="toggleSection('exportSectionCSV')">
+CSV形式出力（時間,種名,数）
+</button>
+</h3>
+
+<div id="exportSectionCSV" class="toggleContent">
+<pre id="exportAreaCSV"></pre>
+</div>
+
+<hr>
+
+<h3>よく見る鳥を設定</h3>
+
+<input id="newBird">
+<button onclick="addBird()">追加</button>
+
+<ul id="customBirdList"></ul>
+
+<div id="editModal" class="modal">
+
+<div class="modal-content">
+
+<h3>記録を編集</h3>
+
+<label>鳥の名前</label><br>
+<input id="editSpecies"><br><br>
+
+<label>数</label><br>
+<input id="editCount" type="number"><br><br>
+
+<label>概数</label><br>
+
+<button onclick="setEditApprox('+')">+</button>
+<button onclick="setEditApprox('-')">-</button>
+<button onclick="setEditApprox('±')">±</button>
+
+<span id="editApprox"></span>
+
+<br><br>
+
+<button onclick="updateRecord()">更新</button>
+<button onclick="closeEditModal()">キャンセル</button>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
