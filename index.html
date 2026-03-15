@@ -6,66 +6,56 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
-
 <style>
+button { margin:2px; padding:5px 10px; font-size:14px; cursor:pointer; }
 
-button{
-margin:2px;
-padding:5px 10px;
-font-size:14px;
-cursor:pointer;
+#numPad {
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
 }
 
-#numPad{
-margin-top:10px;
-display:flex;
-flex-wrap:wrap;
-gap:5px;
+#numPad button {
+  width:70px;
+  height:50px;
+  line-height:50px;
+  text-align:center;
+  font-size:16px;
+  border-radius:5px;
+  border:1px solid #333;
+  box-sizing:border-box;
+  padding:0;
 }
 
-#numPad button{
-width:70px;
-height:50px;
-line-height:50px;
-text-align:center;
-font-size:16px;
-border-radius:5px;
-border:1px solid #333;
-box-sizing:border-box;
-padding:0;
+#numPad button.reset { width:70px; }
+
+.toggleContent {
+  display:none;
+  padding:0;
+  margin-top:5px;
+  border:none;
 }
 
-#numPad button.reset{
-width:70px;
+.modal {
+  display:none;
+  position:fixed;
+  z-index:10;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background-color: rgba(0,0,0,0.5);
 }
 
-.toggleContent{
-display:none;
-padding:0;
-margin-top:5px;
-border:none;
+.modal-content {
+  background-color:#fff;
+  margin:10% auto;
+  padding:20px;
+  width:90%;
+  max-width:400px;
+  border-radius:5px;
 }
-
-.modal{
-display:none;
-position:fixed;
-z-index:10;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background-color:rgba(0,0,0,0.5);
-}
-
-.modal-content{
-background-color:#fff;
-margin:10% auto;
-padding:20px;
-width:90%;
-max-width:400px;
-border-radius:5px;
-}
-
 </style>
 </head>
 
@@ -81,31 +71,26 @@ border-radius:5px;
 <div id="birdButtons"></div>
 
 <h3>数</h3>
-
 <div>
-<button onclick="minus()">−</button>
-<span id="count">0</span>
-<button onclick="plus()">＋</button>
+  <button onclick="minus()">−</button>
+  <span id="count">0</span>
+  <button onclick="plus()">＋</button>
 </div>
 
 <div id="numPad">
-
-<button onclick="addNumber(1)">1</button>
-<button onclick="addNumber(2)">2</button>
-<button onclick="addNumber(3)">3</button>
-<button onclick="addNumber(4)">4</button>
-<button onclick="addNumber(5)">5</button>
-<button onclick="addNumber(6)">6</button>
-<button onclick="addNumber(7)">7</button>
-<button onclick="addNumber(8)">8</button>
-<button onclick="addNumber(9)">9</button>
-
-<button onclick="addNumber(10)">10</button>
-<button onclick="addNumber(50)">50</button>
-<button onclick="addNumber(100)">100</button>
-
-<button class="reset" onclick="resetCount()">リセット</button>
-
+  <button onclick="addNumber(1)">1</button>
+  <button onclick="addNumber(2)">2</button>
+  <button onclick="addNumber(3)">3</button>
+  <button onclick="addNumber(4)">4</button>
+  <button onclick="addNumber(5)">5</button>
+  <button onclick="addNumber(6)">6</button>
+  <button onclick="addNumber(7)">7</button>
+  <button onclick="addNumber(8)">8</button>
+  <button onclick="addNumber(9)">9</button>
+  <button onclick="addNumber(10)">10</button>
+  <button onclick="addNumber(50)">50</button>
+  <button onclick="addNumber(100)">100</button>
+  <button class="reset" onclick="resetCount()">リセット</button>
 </div>
 
 <br>
@@ -122,15 +107,17 @@ border-radius:5px;
 
 <button id="saveBtn" onclick="saveBird()">記録</button>
 
+<!-- 今日の記録 -->
 <h3>
-<button onclick="toggleSection('logSection')">今日の記録</button>
-<button onclick="clearTodayLogs()">一括削除</button>
+  <button onclick="toggleSection('logSection')">今日の記録</button>
+  <button onclick="clearTodayLogs()">一括削除</button>
 </h3>
 
 <div id="logSection" class="toggleContent">
-<ul id="list"></ul>
+  <ul id="list"></ul>
 </div>
 
+<!-- 種ごとの総計 -->
 <h3>
 <button onclick="toggleSection('summarySection')">
 種ごとの総計（今日）
@@ -138,19 +125,21 @@ border-radius:5px;
 </h3>
 
 <div id="summarySection" class="toggleContent">
-<pre id="summaryArea"></pre>
+  <pre id="summaryArea"></pre>
 </div>
 
+<!-- 時間ごとの総計 -->
 <h3>
-<button onclick="toggleSection('timeSpeciesSection')">
-時間 × 種別 集計（今日）
+<button onclick="toggleSection('timeSummarySection')">
+時間ごとの総計（今日）
 </button>
 </h3>
 
-<div id="timeSpeciesSection" class="toggleContent">
-<pre id="timeSpeciesArea"></pre>
+<div id="timeSummarySection" class="toggleContent">
+  <pre id="timeSummaryArea"></pre>
 </div>
 
+<!-- テキスト出力 -->
 <h3>
 <button onclick="toggleSection('exportSectionText')">
 テキスト出力（時間・種名・数）
@@ -158,7 +147,7 @@ border-radius:5px;
 </h3>
 
 <div id="exportSectionText" class="toggleContent">
-<pre id="exportAreaText"></pre>
+  <pre id="exportAreaText"></pre>
 </div>
 
 <hr>
@@ -170,36 +159,53 @@ border-radius:5px;
 
 <ul id="customBirdList"></ul>
 
+<!-- 編集ポップアップ -->
+
 <div id="editModal" class="modal">
+  <div class="modal-content">
 
-<div class="modal-content">
+    <h3>記録を編集</h3>
 
-<h3>記録を編集</h3>
+    <label>鳥の名前</label><br>
+    <input id="editSpecies"><br><br>
 
-<label>鳥の名前</label><br>
-<input id="editSpecies"><br><br>
+    <label>数</label><br>
+    <input id="editCount" type="number"><br><br>
 
-<label>数</label><br>
-<input id="editCount" type="number"><br><br>
+    <label>概数</label><br>
 
-<label>概数</label><br>
+    <button onclick="setEditApprox('+')">+</button>
+    <button onclick="setEditApprox('-')">-</button>
+    <button onclick="setEditApprox('±')">±</button>
 
-<button onclick="setEditApprox('+')">+</button>
-<button onclick="setEditApprox('-')">-</button>
-<button onclick="setEditApprox('±')">±</button>
+    <span id="editApprox"></span><br><br>
 
-<span id="editApprox"></span>
+    <button onclick="updateRecord()">更新</button>
+    <button onclick="closeEditModal()">キャンセル</button>
 
-<br><br>
-
-<button onclick="updateRecord()">更新</button>
-<button onclick="closeEditModal()">キャンセル</button>
-
-</div>
-
+  </div>
 </div>
 
 <script src="app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+
+  [
+    "logSection",
+    "summarySection",
+    "timeSummarySection",
+    "exportSectionText"
+  ].forEach(id=>{
+
+    const el=document.getElementById(id)
+
+    if(el) el.style.display="block"
+
+  })
+
+})
+</script>
 
 </body>
 </html>
