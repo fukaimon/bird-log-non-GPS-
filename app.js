@@ -332,6 +332,7 @@ function clearTodayLogs() {
 
   showLogs();
   showSummary();
+  exportText();
 }
 
 // -----------------------------
