@@ -116,3 +116,7 @@ input{
   margin-top: 5px;
   border: none;      /* 枠線を消す */
 }
+
+button {
+  touch-action: manipulation;
+}
