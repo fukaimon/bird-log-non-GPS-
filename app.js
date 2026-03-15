@@ -1,3 +1,4 @@
+```javascript
 // ===============================
 // ストレージキー（GPS版と分離）
 // ===============================
@@ -227,6 +228,7 @@ document.getElementById("species").value=""
 showLogs()
 showSummary()
 showTimeSummary()
+showTimeSpeciesSummary()
 exportText()
 
 }
@@ -291,6 +293,7 @@ localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 showLogs()
 showSummary()
 showTimeSummary()
+showTimeSpeciesSummary()
 exportText()
 
 }
@@ -356,6 +359,7 @@ closeEditModal()
 showLogs()
 showSummary()
 showTimeSummary()
+showTimeSpeciesSummary()
 exportText()
 
 }
@@ -449,11 +453,60 @@ let text=""
 
 Object.keys(timeTotal).sort((a,b)=>a-b).forEach(h=>{
 
-text+=h+"時 : "+timeTotal[h]+"\n"
+text+=String(h).padStart(2,"0")+"時 : "+timeTotal[h]+"\n"
 
 })
 
 document.getElementById("timeSummaryArea").textContent=text
+
+}
+
+
+// ===============================
+// 時間 × 種別 集計
+// ===============================
+
+function showTimeSpeciesSummary(){
+
+let logs=JSON.parse(localStorage.getItem(RECORD_KEY)||"[]")
+
+const today=new Date().toDateString()
+
+let table={}
+
+logs.forEach(r=>{
+
+if(new Date(r.time).toDateString()!==today)return
+
+let hour=new Date(r.time).getHours()
+let species=r.species
+let num=extractNumber(r.count)
+
+if(!table[hour]) table[hour]={}
+
+if(!table[hour][species]) table[hour][species]=0
+
+table[hour][species]+=num
+
+})
+
+let text=""
+
+Object.keys(table).sort((a,b)=>a-b).forEach(hour=>{
+
+text+=String(hour).padStart(2,"0")+"時\n"
+
+Object.keys(table[hour]).sort().forEach(species=>{
+
+text+=species+" : "+table[hour][species]+"\n"
+
+})
+
+text+="\n"
+
+})
+
+document.getElementById("timeSpeciesArea").textContent=text
 
 }
 
@@ -521,6 +574,7 @@ localStorage.setItem(RECORD_KEY,JSON.stringify(logs))
 showLogs()
 showSummary()
 showTimeSummary()
+showTimeSpeciesSummary()
 exportText()
 
 }
@@ -535,4 +589,6 @@ updateCount()
 showLogs()
 showSummary()
 showTimeSummary()
+showTimeSpeciesSummary()
 exportText()
+```
