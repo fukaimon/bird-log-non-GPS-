@@ -60,13 +60,12 @@ function renderBirdSettings() {
 function addBird() {
   const name = document.getElementById("newBird").value.trim();
   if (!name) return;
+
   let list = getBirdList();
-  if (list.length >= 10) {
-    alert("最大10種まで");
-    return;
-  }
+
   list.push(name);
   saveBirdList(list);
+
   document.getElementById("newBird").value = "";
   renderBirdButtons();
 }
