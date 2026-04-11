@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Bird Log</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -117,22 +117,22 @@ button { margin:2px; padding:5px 10px; font-size:14px; cursor:pointer; }
   <ul id="list"></ul>
 </div>
 
-<!-- 種ごとの総計 -->
 <h3>
 <button onclick="toggleSection('summarySection')">
 種ごとの総計（今日）
 </button>
+<button onclick="copyText('summaryArea')">コピー</button>
 </h3>
 
 <div id="summarySection" class="toggleContent">
   <pre id="summaryArea"></pre>
 </div>
 
-<!-- 時間ごとの総計 -->
 <h3>
 <button onclick="toggleSection('timeSummarySection')">
 時間ごとの総計（今日）
 </button>
+<button onclick="copyText('timeSummaryArea')">コピー</button>
 </h3>
 
 <div id="timeSummarySection" class="toggleContent">
@@ -144,6 +144,7 @@ button { margin:2px; padding:5px 10px; font-size:14px; cursor:pointer; }
 <button onclick="toggleSection('exportSectionText')">
 テキスト出力（時間・種名・数）
 </button>
+<button onclick="copyText('exportAreaText')">コピー</button>
 </h3>
 
 <div id="exportSectionText" class="toggleContent">
