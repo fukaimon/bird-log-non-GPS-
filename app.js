@@ -301,14 +301,14 @@ function showSummary() {
   });
 
   let text = "";
-  Object.keys(speciesTotal).sort().forEach(s => { text += s + " : " + speciesTotal[s] + "\n"; });
+  Object.keys(speciesTotal).sort().forEach(s => { text += s + " " + speciesTotal[s] + "\n"; });
   document.getElementById("summaryArea").textContent = text;
 
   let timeText = "";
   Object.keys(timeTotal).sort((a,b)=>a-b).forEach(hour => {
     timeText += hour + "時\n";
     Object.keys(timeTotal[hour]).sort().forEach(s => {
-      timeText += "  " + s + " : " + timeTotal[hour][s] + "\n";
+      timeText += "  " + s + " " + timeTotal[hour][s] + "\n";
     });
     timeText += "\n";
   });
@@ -332,10 +332,29 @@ function clearTodayLogs() {
 
   showLogs();
   showSummary();
-  exportText();
 }
 
 // -----------------------------
+// -----------------------------
+// 一括コピー
+// -----------------------------
+function copyText(elementId) {
+  const text = document.getElementById(elementId).textContent;
+
+  if (!text) {
+    alert("コピーする内容がありません");
+    return;
+  }
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert("コピーしました！");
+    })
+    .catch(() => {
+      alert("コピーに失敗しました");
+    });
+}
+
 renderBirdButtons();
 updateCount();
 showLogs();
